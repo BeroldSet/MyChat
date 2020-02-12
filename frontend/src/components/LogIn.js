@@ -1,6 +1,7 @@
 import React from 'react';
-import { connect } from 'react-redux'
-import { enterName } from "../actions/usersAction"
+import { connect } from 'react-redux';
+import { enterName } from "../actions/usersAction";
+import "./LogIn.css"
 
 class App extends React.Component {
   state = {
@@ -18,15 +19,17 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
-          Name:
-          <input
-            type="text"
-            placeholder={'Введите ваше имя...'}
-            value={this.state.name}
-            onChange={e => this.setState({ name: e.target.value })}
-          />
-          <button onClick={() => this.enterName(this.state.name)}>Войти в чат</button>
+      <div className="login-wrap">
+        <div>
+          Представьтесь:
+        </div>
+        <input
+          type="text"
+          placeholder={'Ваше имя...'}
+          value={this.state.name}
+          onChange={e => this.setState({ name: e.target.value })}
+        />
+        <button onClick={() => this.enterName(this.state.name)}>Войти в чат</button>
       </div>
     );
   }

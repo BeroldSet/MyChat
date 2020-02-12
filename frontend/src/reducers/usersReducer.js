@@ -1,5 +1,5 @@
 let initialState = {
-    name: ''
+    name: 'Anon'
 }
 
 const userData = (state = initialState, action) => {
