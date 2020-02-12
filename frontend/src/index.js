@@ -1,12 +1,24 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import { render } from 'react-dom';
+import { createStore, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
+import { Router, Route } from "react-router" ;
+import thunk from 'redux-thunk';
+import rootReducer from './reducers';
+import LogIn from './components/LogIn';
+import Chat from './components/Chat';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+import { createBrowserHistory } from "history";
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+const history = createBrowserHistory();
+const store = createStore(rootReducer, applyMiddleware(thunk));
+
+render(
+    <Provider store={store}>
+        <Router history={history}>
+            <Route exact path="/" component={LogIn}/>
+            <Route path="/chat" component={Chat}/>
+        </Router>
+    </Provider>,
+    document.getElementById('root')
+);
