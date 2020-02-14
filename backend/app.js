@@ -6,8 +6,6 @@ const app = express();
 const server = http.createServer(app)
 const wss = new WebSocket.Server({ server });
 
-let messages = []
-
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
     next();
@@ -16,11 +14,11 @@ app.use(function (req, res, next) {
 wss.on('connection', (ws) => {
 
     ws.on('message', (message) => {
-        const newMessage = JSON.parse(message)
-        messages.push(newMessage)
-
+        console.log("WS-Message", message)
         wss.clients.forEach(client => {
-            client.send(message);
+            if (client != ws) {
+                client.send(message);
+            }
         });
     });
 

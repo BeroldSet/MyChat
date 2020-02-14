@@ -4,16 +4,22 @@ let initialState = {
 
 const chatData = (state = initialState, action) => {
     switch (action.type) {
-        case 'GET_MESSAGES':
-            return {
-                ...state,
-                chatMessages: action.messages
-            }
-        // case 'REFRESH_MESSAGES':
+        // case 'GET_MESSAGES':
         //     return {
         //         ...state,
         //         chatMessages: action.messages
         //     }
+        case 'REFRESH_MESSAGES':
+            console.log("REFRESH_MESSAGES",action.messages)
+            return {
+                ...state,
+                chatMessages: action.messages
+            }
+        case 'CLEAR_HISTORY':
+            return {
+                ...state,
+                chatMessages: []
+            }
         default:
             return state
     }

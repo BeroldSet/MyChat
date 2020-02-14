@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import { getMessages } from "../actions/chatAction";
+import { clearHistory, refreshMessages } from "../actions/chatAction";
 import "./Chat.css"
 
 class Chat extends React.Component {
@@ -11,13 +11,16 @@ class Chat extends React.Component {
     ws = new WebSocket("ws://localhost:8000")
 
     componentDidMount() {
-        this.props.getMessages()
         this.ws.onopen = () => {
             console.log('connected')
+            this.ws.send(JSON.stringify({ owner: "server", text: `${this.props.userName} подключился`, date: new Date() }))
         }
 
-        this.ws.onmessage = () => {
-            this.props.getMessages()
+        this.ws.onmessage = (evt) => {
+            const message = JSON.parse(evt.data)
+            let newMessages = [...this.props.messages]
+            newMessages.push(message)
+            this.props.refreshMessages(newMessages)
         }
 
         this.ws.onclose = () => {
@@ -26,11 +29,18 @@ class Chat extends React.Component {
     }
 
     changeName = () => {
+        this.ws.close()
+        this.props.clearHistory()
         this.props.history.push("/");
     }
 
     submitMessage = () => {
-        const message = { owner: this.props.userName, text: this.state.message }
+        const message = { owner: this.props.userName, text: this.state.message, date: new Date() }
+
+        let newMessages = [...this.props.messages]
+        newMessages.push(message)
+
+        this.props.refreshMessages(newMessages)
         this.ws.send(JSON.stringify(message))
     }
 
@@ -44,11 +54,21 @@ class Chat extends React.Component {
                 <div className="chat-window">
                     <div className="chat-messages-wrap">
                         {this.props.messages.map((message, key) => {
-                            const isMyMessage = this.props.userName === message.owner
-                            return <div key={key} className={`chat-messages ${isMyMessage ? "your-chat-messages" : "not-your-chat-messages"}`}>
-                                {!isMyMessage && <div className="message-owner">{`${message.owner}:`}</div>}
-                                <div className="message-text">{message.text}</div>
-                            </div>
+                            switch (message.owner) {
+                                case this.props.userName:
+                                    return <div key={key} className='chat-messages your-chat-messages'>
+                                        <div className="message-text">{message.text}</div>
+                                    </div>
+                                case 'server':
+                                    return <div key={key} className='chat-messages server-messages'>
+                                        <div className="message-text">{message.text}</div>
+                                    </div>
+                                default:
+                                    return <div key={key} className='chat-messages not-your-chat-messages'>
+                                        <div className="message-owner">{`${message.owner}:`}</div>
+                                        <div className="message-text">{message.text}</div>
+                                    </div>
+                            }
                         })}
                     </div>
                     <input
@@ -69,9 +89,9 @@ const mapStateToProps = ({ userData, chatData }) => ({
     messages: chatData.chatMessages
 })
 
-const mapDispatchToProps = dispatch => ({
-    getMessages: () => dispatch(getMessages()),
-    // refreshMessages: (newMessages) => dispatch(refreshMessages(newMessages))
+const mapDispatchToProps = ({
+    refreshMessages,
+    clearHistory
 })
 
 export default connect(

@@ -25,6 +25,10 @@
     padding: 5px;
 }
 
+.server-messages{
+    font-style: italic;
+}
+
 .not-your-chat-messages{
     background-color: lightgrey;  
 }

@@ -8,10 +8,6 @@ class App extends React.Component {
     name: ''
   }
 
-  componentDidMount() {
-    console.log("LogIn")
-  }
-
   enterName = (name) => {
     this.props.enterName(name)
     this.props.history.push("/chat");
@@ -35,9 +31,9 @@ class App extends React.Component {
   }
 }
 
-const mapDispatchToProps = dispatch => ({
-  enterName: (name) => dispatch(enterName(name))
-})
+const mapDispatchToProps = ({
+  enterName
+});
 
 export default connect(
   null,
