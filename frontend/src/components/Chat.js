@@ -29,8 +29,6 @@ class Chat extends React.Component {
     }
 
     changeName = () => {
-        this.ws.close()
-        this.props.clearHistory()
         this.props.history.push("/");
     }
 
@@ -43,13 +41,20 @@ class Chat extends React.Component {
         this.props.refreshMessages(newMessages)
         this.ws.send(JSON.stringify(message))
     }
+    
+    componentWillUnmount() {
+        console.log("unmount")
+        this.props.clearHistory()
+        this.ws.close()
+    }
+
 
     render() {
         return (
             <div className="chat-wrap">
                 <div className="user-panel">
-                    <button onClick={this.changeName}>Сменить имя</button>
-                    <div>{this.props.userName}</div>
+                    <button className="logout-button" onClick={this.changeName}>Сменить имя</button>
+                    <div className="chat-username">{this.props.userName}</div>
                 </div>
                 <div className="chat-window">
                     <div className="chat-messages-wrap">
@@ -73,11 +78,12 @@ class Chat extends React.Component {
                     </div>
                     <input
                         type="text"
-                        placeholder={'Сообщение'}
+                        className="chat-input"
+                        placeholder="Сообщение"
                         value={this.state.value}
                         onChange={(e) => this.setState({ message: e.target.value })}
                     />
-                    <button onClick={this.submitMessage}>Отправить</button>
+                    <button className="send-message-button" onClick={this.submitMessage}>Отправить сообщение</button>
                 </div>
             </div>
         );

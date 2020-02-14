@@ -16,16 +16,17 @@ class App extends React.Component {
   render() {
     return (
       <div className="login-wrap">
-        <div>
+        <div className="login-greeting">
           Представьтесь:
         </div>
         <input
           type="text"
+          className="login-input"
           placeholder={'Ваше имя...'}
           value={this.state.name}
           onChange={e => this.setState({ name: e.target.value })}
         />
-        <button onClick={() => this.enterName(this.state.name)}>Войти в чат</button>
+        <button className="login-button" onClick={() => this.enterName(this.state.name)}>Войти в чат</button>
       </div>
     );
   }

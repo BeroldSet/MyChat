@@ -6,6 +6,5 @@ export const sortReverse = (messages) => {
         // to get a value that is either negative, positive, or zero.
         return new Date(a.date) - new Date(b.date) ;
       });
-      console.log("sortedDate",sortedDate)
       return sortedDate
 }

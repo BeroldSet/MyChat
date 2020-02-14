@@ -14,6 +14,8 @@
 
 .chat-window{
     width: 360px;
+    display: flex;
+    flex-direction: column;
 }
 
 .chat-messages{
@@ -23,10 +25,12 @@
     border-radius: 5px;
     margin: 5px;
     padding: 5px;
+    font-size: 17px;
 }
 
 .server-messages{
     font-style: italic;
+    justify-content: center;
 }
 
 .not-your-chat-messages{
@@ -42,4 +46,49 @@
 .message-owner{
     margin-right: 10px;
     font-weight: bold;
+}
+
+.logout-button{
+    border-radius: 3px;
+    background-color: white;
+    font-size: 16px;
+    color: black;
+    border: 2px solid #008CBA;
+    margin: 16px;
+    font-weight: 700;
+    padding: 12px 31px;
+}
+
+.logout-button:hover{
+    cursor: pointer;
+}
+
+
+.send-message-button{
+    border-radius: 3px;
+    background-color: white;
+    font-size: 16px;
+    color: black;
+    border: 2px solid #4CAF50;
+    margin: 16px;
+    font-weight: 700;
+    padding: 12px 31px;
+}
+
+.send-message-button:hover{
+    cursor: pointer;
+}
+
+.chat-username{
+    font-size: 25px;
+}
+
+.chat-input{
+    outline: none;
+    padding: 9px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    resize: vertical;
+    font-size: 17px;
 }

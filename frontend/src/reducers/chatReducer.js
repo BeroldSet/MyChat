@@ -10,7 +10,6 @@ const chatData = (state = initialState, action) => {
         //         chatMessages: action.messages
         //     }
         case 'REFRESH_MESSAGES':
-            console.log("REFRESH_MESSAGES",action.messages)
             return {
                 ...state,
                 chatMessages: action.messages

@@ -9,3 +9,33 @@ body{
     align-items: center;
     flex-direction: column
 }
+
+.login-greeting{
+    margin: 10px;
+    font-size: 25px;
+}
+
+.login-input{
+    outline: none;
+    padding: 9px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    resize: vertical;
+    font-size: 17px;
+}
+
+.login-button{
+    border-radius: 3px;
+    background-color: white;
+    font-size: 16px;
+    color: black;
+    border: 2px solid #008CBA;
+    margin: 16px;
+    font-weight: 700;
+    padding: 12px 31px;
+}
+
+.login-button:hover{
+    cursor: pointer;
+}
