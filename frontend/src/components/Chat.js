@@ -13,7 +13,7 @@ class Chat extends React.Component {
     componentDidMount() {
         this.ws.onopen = () => {
             console.log('connected')
-            this.ws.send(JSON.stringify({ owner: "server", text: `${this.props.userName} подключился`, date: new Date() }))
+            this.ws.send(JSON.stringify({ owner: "server", text: `${this.props.userName} подключился`, date: new Date().toISOString() }))
         }
 
         this.ws.onmessage = (evt) => {
@@ -33,7 +33,7 @@ class Chat extends React.Component {
     }
 
     submitMessage = () => {
-        const message = { owner: this.props.userName, text: this.state.message, date: new Date() }
+        const message = { owner: this.props.userName, text: this.state.message, date: new Date().toISOString() }
 
         let newMessages = [...this.props.messages]
         newMessages.push(message)
