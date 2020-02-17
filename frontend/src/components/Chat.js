@@ -4,8 +4,10 @@ import { clearHistory, refreshMessages } from "../actions/chatAction";
 import "./Chat.css"
 
 class Chat extends React.Component {
-    state = {
-        message: ''
+    constructor(props) {
+      super(props);
+      this.submitMessage = this.submitMessage.bind(this);
+      this.messageInput = React.createRef();
     }
 
     ws = new WebSocket("ws://localhost:8000")
@@ -32,16 +34,18 @@ class Chat extends React.Component {
         this.props.history.push("/");
     }
 
-    submitMessage = () => {
-        const message = { owner: this.props.userName, text: this.state.message, date: new Date().toISOString() }
+    submitMessage = (event) => {
+        const message = { owner: this.props.userName, text: this.messageInput.current.value, date: new Date().toISOString() }
 
         let newMessages = [...this.props.messages]
         newMessages.push(message)
 
         this.props.refreshMessages(newMessages)
         this.ws.send(JSON.stringify(message))
+        this.messageInput.current.value = ""
+        event.preventDefault();
     }
-    
+
     componentWillUnmount() {
         console.log("unmount")
         this.props.clearHistory()
@@ -76,14 +80,10 @@ class Chat extends React.Component {
                             }
                         })}
                     </div>
-                    <input
-                        type="text"
-                        className="chat-input"
-                        placeholder="Сообщение"
-                        value={this.state.value}
-                        onChange={(e) => this.setState({ message: e.target.value })}
-                    />
-                    <button className="send-message-button" onClick={this.submitMessage}>Отправить сообщение</button>
+                    <form className="chat-form" onSubmit={this.submitMessage}>
+                        <input className="chat-input" placeholder='Сообщение' type="text" ref={this.messageInput} />
+                        <input className="send-message-button" type="submit" value="Отправить сообщение" />
+                    </form>
                 </div>
             </div>
         );

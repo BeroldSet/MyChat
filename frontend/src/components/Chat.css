@@ -18,6 +18,11 @@
     flex-direction: column;
 }
 
+.chat-form{
+    display: flex;
+    flex-direction: column;
+}
+
 .chat-messages{
     display: flex;  
     height: 30px;
