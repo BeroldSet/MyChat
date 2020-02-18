@@ -4,11 +4,6 @@ let initialState = {
 
 const chatData = (state = initialState, action) => {
     switch (action.type) {
-        // case 'GET_MESSAGES':
-        //     return {
-        //         ...state,
-        //         chatMessages: action.messages
-        //     }
         case 'REFRESH_MESSAGES':
             return {
                 ...state,
