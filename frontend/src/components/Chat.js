@@ -1,39 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux'
-// import { clearHistory, refreshMessages } from "../actions/chatAction";
+import { clearHistory, refreshMessages } from "../actions/chatAction";
 import "./Chat.css"
 
 let ws
 
 function Chat(props) {
     const [myMessage, setMessage] = useState('');
-    const [allMessages, setAllMessages] = useState([]);
 
     useEffect(() => {
+        const { clearHistory } = props
         ws = new WebSocket("ws://localhost:8000")
 
+        return () => {
+            console.log("unmount")
+            clearHistory()
+            ws.close()
+        }
+    }, [])
+
+    useEffect(() => {
+
         ws.onopen = () => {
+            console.log("connect")
             ws.send(JSON.stringify({ owner: "server", text: `${props.userName} подключился`, date: new Date().toISOString() }))
         }
 
         ws.onmessage = (evt) => {
-            console.log("onmessage",props.userName)
             const message = JSON.parse(evt.data)
-            // let newMessages = [...allMessages]
-            // newMessages.push(message)
-            setAllMessages((prev) => { return [...prev, message] })
+            let newMessages = [...props.messages]
+            newMessages.push(message)
+            props.refreshMessages(newMessages)
         }
 
         ws.onclose = () => {
             console.log('disconnected')
         }
-
-        return () => {
-            console.log("unmount")
-            // props.clearHistory()
-            ws.close()
-        }
-    }, [])
+    })
 
     const changeName = () => {
         props.history.push("/");
@@ -42,10 +45,10 @@ function Chat(props) {
     const submitMessage = () => {
         const message = { owner: props.userName, text: myMessage, date: new Date().toISOString() }
 
-        // let newMessages = [...allMessages]
-        // newMessages.push(message)
+        let newMessages = [...props.messages]
+        newMessages.push(message)
 
-        setAllMessages((prev) => { return [...prev, message] })
+        props.refreshMessages(newMessages)
         ws.send(JSON.stringify(message))
         setMessage('')
     }
@@ -58,7 +61,7 @@ function Chat(props) {
             </div>
             <div className="chat-window">
                 <div className="chat-messages-wrap">
-                    {allMessages.map((message, key) => {
+                    {props.messages.map((message, key) => {
                         switch (message.owner) {
                             case props.userName:
                                 return <div key={key} className='chat-messages your-chat-messages'>
@@ -89,8 +92,8 @@ const mapStateToProps = ({ userData, chatData }) => ({
 })
 
 const mapDispatchToProps = ({
-    // refreshMessages,
-    // clearHistory
+    refreshMessages,
+    clearHistory
 })
 
 export default connect(
