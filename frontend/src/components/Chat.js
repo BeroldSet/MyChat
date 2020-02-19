@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux'
 import { clearHistory, refreshMessages } from "../actions/chatAction";
+import { useDispatch, useSelector } from "react-redux"
 import "./Chat.css"
 
 let ws
 
-function Chat(props) {
+export function Chat(props) {
     const [myMessage, setMessage] = useState('');
+    const userName = useSelector(state => state.userData.name);
+    const messages = useSelector(state => state.chatData.chatMessages);
+    const dispatch = useDispatch();
 
     useEffect(() => {
-        const { clearHistory } = props
         ws = new WebSocket("ws://localhost:8000")
 
         return () => {
-            console.log("unmount")
-            clearHistory()
+            dispatch(clearHistory())
+            serverMessage(`${userName} отключился`)
             ws.close()
         }
     }, [])
@@ -22,15 +24,15 @@ function Chat(props) {
     useEffect(() => {
 
         ws.onopen = () => {
-            console.log("connect")
-            ws.send(JSON.stringify({ owner: "server", text: `${props.userName} подключился`, date: new Date().toISOString() }))
+            console.log("connected")
+            serverMessage(`${userName} подключился`)
         }
 
         ws.onmessage = (evt) => {
             const message = JSON.parse(evt.data)
-            let newMessages = [...props.messages]
+            let newMessages = [...messages]
             newMessages.push(message)
-            props.refreshMessages(newMessages)
+            dispatch(refreshMessages(newMessages))
         }
 
         ws.onclose = () => {
@@ -38,17 +40,21 @@ function Chat(props) {
         }
     })
 
+    const serverMessage = (messageText) => {
+        ws.send(JSON.stringify({ owner: "server", text: messageText, date: new Date().toISOString() }))
+    }
+
     const changeName = () => {
         props.history.push("/");
     }
 
     const submitMessage = () => {
-        const message = { owner: props.userName, text: myMessage, date: new Date().toISOString() }
+        const message = { owner: userName, text: myMessage, date: new Date().toISOString() }
 
-        let newMessages = [...props.messages]
+        let newMessages = [...messages]
         newMessages.push(message)
 
-        props.refreshMessages(newMessages)
+        dispatch(refreshMessages(newMessages))
         ws.send(JSON.stringify(message))
         setMessage('')
     }
@@ -57,13 +63,13 @@ function Chat(props) {
         <div className="chat-wrap">
             <div className="user-panel">
                 <button className="logout-button" onClick={changeName}>Сменить имя</button>
-                <div className="chat-username">{props.userName}</div>
+                <div className="chat-username">{userName}</div>
             </div>
             <div className="chat-window">
                 <div className="chat-messages-wrap">
-                    {props.messages.map((message, key) => {
+                    {messages.map((message, key) => {
                         switch (message.owner) {
-                            case props.userName:
+                            case userName:
                                 return <div key={key} className='chat-messages your-chat-messages'>
                                     <div className="message-text">{message.text}</div>
                                 </div>
@@ -85,18 +91,3 @@ function Chat(props) {
         </div>
     );
 }
-
-const mapStateToProps = ({ userData, chatData }) => ({
-    userName: userData.name,
-    messages: chatData.chatMessages
-})
-
-const mapDispatchToProps = ({
-    refreshMessages,
-    clearHistory
-})
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(Chat)
